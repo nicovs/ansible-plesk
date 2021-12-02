@@ -8,13 +8,14 @@
     mode: 0700
 
 - name: Run Plesk installer
-  command: /root/plesk-installer --select-product-id=plesk \
-              --select-release-id "{{ plesk.release_id }}" \
-            {%- if plesk.install_components|length != 0 %}
-              {{ plesk.install_components|join( ' ' ) -}}
-            {% else %}
-              --installation-type Typical
-            {% endif -%}
+  shell: |
+    /root/plesk-installer --select-product-id=plesk \
+      --select-release-id "{{ plesk.release_id }}" \
+    {%- if plesk.install_components|length != 0 %}
+      {{ plesk.install_components|join( ' ' ) -}}
+    {% else %}
+      --installation-type Typical
+    {% endif -%}
   args:
     creates: /usr/sbin/plesk
 
@@ -23,24 +24,28 @@
   register: result
   ignore_errors: True
 
+- debug: 
+    msg: "{{ result }}"
+
 - name: Run Plesk initial configuration
-  command: plesk bin init_conf \
-              --init \
-              -passwd "{{ plesk.admin_password }}" \
-              -email "{{ plesk.email }}" \
-              -license_agreed true \
-              -default-ip "{{ ansible_default_ipv4.address }}" \
-              -ip-type shared \
-              -hostname "{{ plesk.hostname }}" \
-              -send_announce false \
-              -company "{{ plesk.company }}" \
-              -name "{{ plesk.name }}" \
-              -phone "{{ plesk.phone }}" \
-              -address "{{ plesk.address }}" \
-              -city "{{ plesk.city }}" \
-              -state "{{ plesk.state }}" \
-              -zip "{{ plesk.zip }} " \
-              -country "{{ plesk.country }}"
+  shell: |
+    plesk bin init_conf \
+    --init \
+    -passwd "{{ plesk.admin_password }}" \
+    -email "{{ plesk.email }}" \
+    -license_agreed true \
+    -default-ip "{{ ansible_default_ipv4.address }}" \
+    -ip-type shared \
+    -hostname "{{ plesk.hostname }}" \
+    -send_announce false \
+    -company "{{ plesk.company }}" \
+    -name "{{ plesk.name }}" \
+    -phone "{{ plesk.phone }}" \
+    -address "{{ plesk.address }}" \
+    -city "{{ plesk.city }}" \
+    -state "{{ plesk.state }}" \
+    -zip "{{ plesk.zip }} " \
+    -country "{{ plesk.country }}"
   when: result.rc == 1
 
 - name: Disable poweruser mode
