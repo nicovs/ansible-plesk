@@ -13,10 +13,10 @@ plesk: {
     state: My State,
     zip: 12345,
     country: GR,
-    release_id: PLESK_12_0_18,
+    release_id: PLESK_18_0_40,
     license: "",
     install_components: [ 
-#       "--install-component=common",
-#       "--install-component=web-server" 
+#       "--install-component common",
+#       "--install-component web-server" 
     ]
 }
